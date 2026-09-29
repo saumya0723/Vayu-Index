@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lead-Time Analysis | Vayu Index</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+
+<header class="top-header">
+  <div class="brand">
+    <div class="brand-icon">✈</div>
+    <div class="brand-text">
+      <h1>VAYU INDEX</h1>
+      <p>Airfare Price Intelligence Platform</p>
+    </div>
+  </div>
+  <div class="header-country"><img src="./india-logo.png" alt="India">INDIA</div>
+</header>
+
+<nav class="main-nav">
+  <div class="nav-container">
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Overview</a>
+      <a href="anomaly-routes.html" class="nav-link">Anomaly Routes</a>
+      <a href="lead-time.html" class="nav-link active">Lead-Time Analysis</a>
+      <a href="data-quality.html" class="nav-link">Data Quality</a>
+      <a href="cpi-validation.html" class="nav-link">CPI Validation</a>
+      <a href="api.html" class="nav-link">API</a>
+    </div>
+    <div class="route-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+      <input type="text" id="routeSearch" placeholder="Search routes..." autocomplete="off">
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="last-updated"><span>Sample data · as of</span> <strong>28 Sep 2026</strong></div>
+    <div class="tourism-slide slide-1"></div>
+  <div class="tourism-slide slide-2"></div>
+  <div class="tourism-slide slide-3"></div>
+  <div class="tourism-slide slide-4"></div>
+  <div class="tourism-slide slide-5"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-label">LEAD-TIME ANALYSIS</div>
+    <h2>Lead-Time Analysis</h2>
+    <p>Analyze airfare changes across booking windows before departure.</p>
+  </div>
+</section>
+
+<main class="page-container">
+
+  <section class="kpi-strip four-col hero-overlap">
+    <div class="kpi-item">
+      <div class="severity-icon total"><i class="fa-solid fa-clock"></i></div>
+      <div class="kpi-content"><div class="kpi-number">18 days</div><div class="kpi-label">Advance-Purchase<br>Windows</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="severity-icon low"><i class="fa-solid fa-arrow-down"></i></div>
+      <div class="kpi-content"><div class="kpi-number">15–30d</div><div class="kpi-label">Lowest Fare<br>Window</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="severity-icon high"><i class="fa-solid fa-arrow-up"></i></div>
+      <div class="kpi-content"><div class="kpi-number">0–3d</div><div class="kpi-label">Highest Fare<br>Window</div></div>
+    </div>
+    <div class="kpi-item">
+      <div class="severity-icon medium"><i class="fa-solid fa-percent"></i></div>
+      <div class="kpi-content"><div class="kpi-number">+42%</div><div class="kpi-label">T+1 Premium<br>vs T+45</div></div>
+    </div>
+  </section>
+
+  <div class="split-grid">
+
+  <section class="chart-section">
+    <div class="chart-header">
+      <div class="chart-header-row">
+        <h3>Airfare vs. Days Before Departure</h3>
+      </div>
+      <div class="chart-header-row">
+        <p>Average fare by advance-purchase window (T+n days), across monitored routes</p>
+      </div>
+    </div>
+
+    <div class="chart-area">
+      <svg id="ltChart" class="index-chart" viewBox="0 0 1000 280" preserveAspectRatio="none"></svg>
+    </div>
+  </section>
+
+  <section class="route-section">
+    <div class="route-section-header">
+      <div>
+        <p class="section-label">ROUTE-WISE DETAIL</p>
+        <h3>Route-wise Lead-Time Analysis</h3>
+        <p class="route-description">Average fare by booking window, per route</p>
+      </div>
+      <div class="live-indicator"><span class="live-dot"></span>Sample Data</div>
+    </div>
+
+    <div class="route-table-wrapper">
+      <table class="route-table leadtime-table">
+        <thead><tr><th>Route</th><th>Airline</th><th>T+1</th><th>T+7</th><th>T+15</th><th>T+30</th><th>T+45</th></tr></thead>
+        <tbody id="routeTableBody">
+          <tr data-route="Delhi Mumbai DEL BOM"><td>DEL → BOM</td><td>IndiGo</td><td>₹8,450</td><td>₹6,200</td><td>₹4,850</td><td>₹3,900</td><td>₹3,500</td></tr>
+          <tr data-route="Mumbai Bengaluru BOM BLR"><td>BOM → BLR</td><td>Air India</td><td>₹6,800</td><td>₹5,100</td><td>₹4,200</td><td>₹3,600</td><td>₹3,200</td></tr>
+          <tr data-route="Delhi Bengaluru DEL BLR"><td>DEL → BLR</td><td>IndiGo</td><td>₹9,200</td><td>₹7,400</td><td>₹5,600</td><td>₹4,700</td><td>₹4,100</td></tr>
+          <tr data-route="Hyderabad Delhi HYD DEL"><td>HYD → DEL</td><td>Air India</td><td>₹8,900</td><td>₹6,900</td><td>₹5,300</td><td>₹4,400</td><td>₹3,900</td></tr>
+          <tr data-route="Chennai Kolkata MAA CCU"><td>MAA → CCU</td><td>SpiceJet</td><td>₹7,600</td><td>₹5,900</td><td>₹4,700</td><td>₹3,900</td><td>₹3,400</td></tr>
+          <tr data-route="Mumbai Goa BOM GOI"><td>BOM → GOI</td><td>Akasa Air</td><td>₹5,100</td><td>₹4,000</td><td>₹3,300</td><td>₹2,800</td><td>₹2,500</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div id="noRouteResults" class="no-route-results">No matching routes found.</div>
+  </section>
+
+  </div>
+
+  <section class="insight-card">
+    <p class="section-label">BOOKING WINDOW INSIGHT</p>
+    <h3>Lead-Time Pattern</h3>
+    <p>Fares generally increase as departure approaches, with the largest variation observed within 7 days of departure.</p>
+
+    <div class="insight-chips">
+      <div class="insight-chip high">
+        <div class="chip-range">T+1 to T+7</div>
+        <div class="chip-level"><span class="chip-dot"></span>High Volatility</div>
+      </div>
+      <div class="insight-chip medium">
+        <div class="chip-range">T+15 to T+30</div>
+        <div class="chip-level"><span class="chip-dot"></span>Moderate</div>
+      </div>
+      <div class="insight-chip low">
+        <div class="chip-range">T+45</div>
+        <div class="chip-level"><span class="chip-dot"></span>Lower Variation</div>
+      </div>
+    </div>
+  </section>
+
+<section class="insight-card"><p class="section-label">LEAD-TIME ELASTICITY</p><h3>Fare Elasticity by Advance-Purchase Window</h3>
+<p>Midpoint arc elasticity: % change in average fare per % change in days booked in advance. Negative values mean fares fall as booking moves earlier.</p>
+<div class="insight-chips" id="elasticity"></div></section>
+</main>
+
+<script>
+(function(){
+const T=["T+1","T+7","T+15","T+30","T+45"],D=[1,7,15,30,45];
+const rows=[...document.querySelectorAll("#routeTableBody tr")];
+const avg=T.map((_,i)=>Math.round(rows.reduce((s,r)=>s+parseInt(r.children[2+i].textContent.replace(/\D/g,"")),0)/rows.length));
+const svg=document.getElementById("ltChart"),y=v=>224-v*0.02425,x=i=>60+i*227.5;
+let h='<defs><linearGradient id="leadtimeAreaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f07828" stop-opacity="0.30"/><stop offset="100%" stop-color="#f07828" stop-opacity="0"/></linearGradient></defs>';
+[0,2000,4000,6000,8000].forEach(v=>{h+=`<line x1="60" y1="${y(v)}" x2="970" y2="${y(v)}" class="grid-line"/><text x="48" y="${y(v)+4}" class="axis-label" text-anchor="end">\u20b9${v.toLocaleString("en-IN")}</text>`});
+const pts=avg.map((v,i)=>x(i)+","+y(v)),line="M"+pts.join(" L");
+h+=`<path fill="url(#leadtimeAreaGrad)" stroke="none" d="${line} L970,224 L60,224 Z"/><path class="leadtime-line" d="${line}"/>`;
+avg.forEach((v,i)=>{h+=`<circle class="leadtime-point" cx="${x(i)}" cy="${y(v)}" r="5"/><text class="leadtime-value-label" x="${i==4?960:x(i)+(i==0?18:0)}" y="${y(v)-12}" text-anchor="${i==0?"start":i==4?"end":"middle"}">\u20b9${v.toLocaleString("en-IN")}</text><text x="${x(i)}" y="270" class="axis-label" text-anchor="middle">${T[i]}</text>`});
+svg.innerHTML=h;
+const k=document.querySelectorAll(".kpi-number");
+k[0].textContent=T.length;k[1].textContent=T[avg.indexOf(Math.min(...avg))];k[2].textContent=T[avg.indexOf(Math.max(...avg))];
+k[3].textContent="+"+Math.round((avg[0]/avg[4]-1)*100)+"%";
+let e="";
+for(let i=0;i<4;i++){const dp=(avg[i+1]-avg[i])/((avg[i+1]+avg[i])/2),dt=(D[i+1]-D[i])/((D[i+1]+D[i])/2),el=dp/dt,c=Math.abs(el)>0.4?"high":Math.abs(el)>0.2?"medium":"low";
+e+=`<div class="insight-chip ${c}"><div class="chip-range">${T[i]} \u2192 ${T[i+1]}</div><div class="chip-level"><span class="chip-dot"></span>\u03b5 = ${el.toFixed(2)}</div></div>`}
+document.getElementById("elasticity").innerHTML=e;
+})();
+</script>
+<script>
+// Animate KPI numbers counting up from 0 on load
+(function () {
+  function animateCounters(selector) {
+    document.querySelectorAll(selector).forEach((el) => {
+      const raw = el.textContent.trim();
+      const match = raw.match(/^([^\d]*)([\d,]+(?:\.\d+)?)([\s\S]*)$/);
+      if (!match) return;
+      const prefix = match[1], numStr = match[2], suffix = match[3];
+      const target = parseFloat(numStr.replace(/,/g, ""));
+      if (isNaN(target)) return;
+      const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+      const hasComma = numStr.includes(",");
+      const duration = 1200;
+      const start = performance.now();
+      function frame(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        let display = decimals > 0 ? current.toFixed(decimals) : Math.round(current).toString();
+        if (hasComma) {
+          const parts = display.split(".");
+          parts[0] = Number(parts[0]).toLocaleString("en-IN");
+          display = parts.join(".");
+        }
+        el.textContent = prefix + display + suffix;
+        if (progress < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  animateCounters(".kpi-number");
+})();
+</script>
+
+</body>
+</html>

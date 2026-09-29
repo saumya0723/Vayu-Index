@@ -1,0 +1,51 @@
+{
+  "source_organization": "Directorate General of Civil Aviation",
+  "source_portal": "https://www.dgca.gov.in",
+  "dataset_name": "City Pair Wise Scheduled Domestic Passenger Traffic Statistics",
+  "report_year": "2024-25",
+  "raw_filename": "TABLE 5.01 (INDIAN CITY-WISE PASSENGER TRAFFIC).pdf",
+  "source_url": "Not available - file provided directly; refer to https://www.dgca.gov.in for official portal",
+  "download_date": "2026-09-07",
+  "table_title": "CITY PAIR WISE SCHEDULED DOMESTIC PASSENGER TRAFFIC STATISTICS FOR THE YEAR 2024-25",
+  "parsing_repair_notes": "Two variants of the same underlying column-boundary-overflow artifact were found and repaired, both verified directly against pdfplumber's raw extract_tables() output (not inferred or guessed).\nVARIANT 1 (repair_type=CITY2_PAX_BOUNDARY_BLEED): 12 rows affected. The long airport name 'Ayodhya International Airport', placed in the CITY 2 column, does not fit and bleeds into the adjacent PASSENGERS-TO-CITY2 cell on every single occurrence. city_2 was truncated to 'Ayodhya International Airp' and the leading 'ort ' prefix from the continuation was glued onto the pax_to_city2 cell. Repaired deterministically: city_2 restored to 'Ayodhya International Airport', passenger value extracted from the 'ort <value>' remainder.\nVARIANT 2 (repair_type=CITY1_CITY2_BOUNDARY_BLEED): 1 row affected (S.No 825). The long airport name 'Rajkot International Airport', placed in the (narrower) CITY 1 column, overflows into the CITY 2 cell — this same name renders correctly in all 7 of its other occurrences, all in the wider CITY 2 column. city_1 was truncated to 'Rajkot International Airpor' (missing final 't') and that missing 't' was glued directly onto the start of the real next city name 'UDAIPUR' with no separating space, producing 'tUDAIPUR' in the city_2 cell. Repaired deterministically: city_1 restored to 'Rajkot International Airport', city_2 restored to 'UDAIPUR'.\nAll repaired rows have pdf_parsing_repaired=True and pdf_parsing_repair_type set to the variant above. A full scan of all 835 extracted rows for any other cell that is a truncated prefix of a longer cell value elsewhere in the dataset found no further occurrences of either variant.",
+  "pages": 17,
+  "pages_with_data": 17,
+  "page_row_counts": {
+    "1": 50,
+    "2": 50,
+    "3": 50,
+    "4": 50,
+    "5": 50,
+    "6": 50,
+    "7": 50,
+    "8": 50,
+    "9": 50,
+    "10": 50,
+    "11": 50,
+    "12": 50,
+    "13": 50,
+    "14": 50,
+    "15": 50,
+    "16": 50,
+    "17": 35
+  },
+  "extracted_rows": 835,
+  "valid_rows": 759,
+  "invalid_rows_flagged": 76,
+  "duplicate_pairs": 0,
+  "missing_c1_to_c2_pax": 29,
+  "missing_c2_to_c1_pax": 47,
+  "unique_city_pairs": 835,
+  "total_bidirectional_passengers": 165535436,
+  "dash_interpretation": "The symbol '-' in the source PDF is used by DGCA to indicate zero or not-operated traffic on that direction. It has been preserved as NaN in the numeric columns and flagged via flag_city1_to_city2 / flag_city2_to_city1 = 'DGCA_DASH'. Do NOT automatically substitute 0 without confirming intent.",
+  "derived_fields": {
+    "total_bidirectional_passengers": "passengers_city1_to_city2 + passengers_city2_to_city1. NaN when either directional value is NaN."
+  },
+  "processing_timestamp": "2026-09-07T04:29:47.196124+00:00",
+  "raw_file_preserved": true,
+  "raw_file_md5": "9d70f1a13d08043b4c8e260f803a4467",
+  "processed_csv": "/home/claude/vayu/data/official/dgca/processed/dgca_city_pair_passenger_traffic_2024_25.csv",
+  "validation_issues": [
+    "CITY1 == CITY2: 1 rows"
+  ]
+}
