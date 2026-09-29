@@ -1,0 +1,2 @@
+duplicate_group_id,group_size,canonical_observation_id,canonical_collection_timestamp,duplicate_observation_ids,max_timestamp_delta_minutes,capture_signature_agreement,origin,destination,carrier,flight_number,travel_date,departure_time,fare_class,advance_purchase_window,source,total_fare,availability_status,duplicate_reason
+DUPGRP-OBS02976,2,OBS02976,2026-09-05 09:00,OBS02977,1,True,BOM,DEL,6E,6E-2341,2026-09-21,08:10,Economy Saver,T15(12-18),AirlineSite,5106,Available,TECHNICAL_DUPLICATE

@@ -1,0 +1,6 @@
+source,observation_count,priced_observation_count,sold_out_observation_count,participating_observation_count,flight_cell_participation_count,observation_flag_count,high_severity_observation_count,r07_involvement_count,r13_involvement_count,median_abs_relative_deviation_from_flight_median,max_abs_relative_deviation_from_flight_median,phase9_schema_version
+AirlineSite,593,592,1,592,593,0,0,0,6,0.006280,0.051607,phase9-v1
+Cleartrip,613,613,0,613,613,0,0,0,5,0.006536,0.050786,phase9-v1
+EaseMyTrip,582,582,0,582,582,0,0,0,7,0.007062,0.053287,phase9-v1
+Goibibo,602,602,0,602,602,0,0,0,6,0.006546,0.050996,phase9-v1
+MMT,609,609,0,609,609,0,0,0,6,0.005468,0.053287,phase9-v1
