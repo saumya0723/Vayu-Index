@@ -1,150 +1,194 @@
-# Vayu Index Backend
+<div align="center">
 
-Vayu Index is a backend and bundled dashboard prototype for tracking airfare prices across a fixed basket of 15 domestic routes in India. The backend includes a staged airfare data pipeline, a read-only FastAPI service, a browser dashboard, an official MoSPI airfare CPI reference series, and optional operator-triggered live quote collectors.
+# Vayu Index
 
-> **Current data status:** The bundled Vayu index snapshot is a synthetic prototype and is not an official market index or MoSPI CPI. SerpApi and Ignav can collect live route/date fare quotes when configured. Live quotes are short-lived observations; they do not automatically become historical index rounds or CPI comparison data.
+### From Airfare Observations to Price Intelligence
 
-## Project scope
+**Airfare Price Intelligence & CPI Benchmarking Platform**
 
-The backend supports these stages:
+Route Fares → Index Movement → Anomaly Signals → MoSPI Comparison
 
-1. Validate source observations and report structural or logical issues.
-2. Normalize fares, routes, carriers, fare classes, and booking windows.
-3. Deduplicate repeated captures and comparable economic records.
-4. Consolidate eligible observations and assess source coverage.
-5. Detect fare anomalies for review.
-6. Aggregate route and booking-window series.
-7. Calculate basket-weighted route, period, and collection-round indices.
-8. Backtest available history and report coverage and production gates.
-9. Serve the published snapshot, diagnostics, CPI comparison, and dashboard through a versioned API.
+**Smart India Hackathon 2026 · SIH26056**
 
-The monitored route basket is: `BOM-DEL`, `BLR-DEL`, `BLR-BOM`, `DEL-HYD`, `DEL-PNQ`, `CCU-DEL`, `AMD-DEL`, `DEL-MAA`, `BOM-HYD`, `BLR-CCU`, `DEL-SXR`, `DEL-GOI`, `DEL-GAU`, `BLR-COK`, and `DEL-IDR`.
+[Overview](#overview) · [Platform](#platform-capabilities) · [Architecture](#system-architecture) · [Setup](#local-setup) · [Documentation](#api-documentation)
 
-## Architecture
+</div>
+
+---
+
+## Overview
+
+**Vayu Index** is an airfare measurement prototype that tracks price movement across a fixed basket of 15 domestic routes in India. It organizes airfare observations into route and booking-window records, detects unusual movements, calculates basket-weighted index series, and compares eligible monthly values with official MoSPI airfare CPI.
+
+The backend combines a reproducible data pipeline, a versioned FastAPI service, and the bundled browser dashboard. The currently published Vayu index snapshot is **synthetic prototype data**. It is not an official market index or MoSPI CPI. Optional live collectors can retrieve short-lived fares for specific routes and dates; those quotes do not automatically become historical index observations or CPI data.
+
+> **Measure airfare movement with clear source, coverage, and data-status information.**
+
+![Vayu Index front page showing the index trend and all 15 monitored routes](docs/images/vayu-dashboard.png)
+
+*Dashboard preview supplied for the project. The displayed figures are prototype snapshot values, not verified live fares or official statistics.*
+
+## The airfare measurement workflow
+
+Vayu processes observation records in defined stages. Official reference data, synthetic development data, live quote results, and published index outputs are kept distinct so users can understand where each value comes from.
 
 ```mermaid
 flowchart TD
-    S[Synthetic test and prototype observations] --> V[Validation]
+    S[Source and prototype observations] --> V[Validation]
     V --> N[Normalization]
     N --> D[Deduplication]
-    D --> C[Consolidation and coverage]
+    D --> C[Consolidation and coverage checks]
     C --> A[Anomaly detection]
-    A --> R[Route aggregation]
-    R --> I[Index engine]
+    A --> R[Route and booking-window aggregation]
+    R --> I[Basket-weighted index calculation]
     I --> B[Backtesting and publication gates]
-    DG[DGCA route traffic] --> W[Route basket and weights]
+    DG[DGCA route traffic] --> W[Monitored route basket and weights]
     W --> R
     M[Official MoSPI airfare CPI] --> X[Exact-month CPI comparison]
     I --> X
-    I --> P[Published CSV snapshot and manifest]
-    P --> API[FastAPI read-only API]
-    L[Operator-triggered SerpApi / Ignav] --> Q[Short-lived live quote store]
-    Q --> API
-    X --> API
+    P[Published tables and manifest] --> API[FastAPI service]
     B --> API
-    API --> UI[Bundled dashboard pages and data bridge]
-    API --> CLIENT[JSON clients]
+    X --> API
+    L[Optional live fare collectors] --> Q[Short-lived quote store]
+    Q --> API
+    API --> UI[Bundled dashboard]
+    API --> CLIENT[JSON API clients]
 ```
 
-At API startup, the repository loads and validates the manifest-referenced CSV tables into a consistent in-memory snapshot. API requests adapt that snapshot into JSON responses; they do not rerun the analytical pipeline. Live quote collection is a separate CLI operation and is stored apart from published historical index inputs. The dashboard files are bundled under `src/dashboard/static/vayu_frontend/` and served by the backend with a runtime data bridge.
+## Platform capabilities
 
-## Project structure
+| Workspace or service | Purpose | Available functions |
+|---|---|---|
+| **Overview** | Review the current Vayu snapshot | Index level and change, trend chart, route fares, and monitored-basket status |
+| **Anomaly Routes** | Inspect unusual airfare movements | Route filters, fare, expected range, deviation, severity, and India map |
+| **Lead-Time Analysis** | Compare available fares by booking window | Route and advance-purchase summaries where observations exist |
+| **Data Quality** | Review pipeline and source readiness | Validation results, route coverage, source status, and quality indicators |
+| **CPI Validation** | Benchmark Vayu against the MoSPI airfare series | MoSPI history, exact-month overlap, coverage qualification, and comparison metrics |
+| **API Console** | Explore backend data endpoints | Endpoint catalogue and request examples |
+| **Live collection** | Request current route/date fare quotes | Optional provider collectors, account readiness, and quote status |
+| **Data pipeline** | Reproduce analysis outputs | Validation, normalization, deduplication, anomaly detection, aggregation, index generation, and backtesting |
 
-```text
-backend/
-├── config/                   # Basket, mappings, source policy, API and publication manifests
-├── data/
-│   ├── official/
-│   │   ├── dgca/             # DGCA traffic source files and processed route-basket data
-│   │   └── mospi/            # Official airfare CPI workbook and processed series
-│   └── synthetic/            # Synthetic prototype observations and edge cases
-├── docs/                     # Methodology, API, data-source, and deployment documentation
-├── outputs/                  # Versioned pipeline results and published snapshot tables
-├── scripts/                  # Pipeline, API, verification, and live-collection commands
-├── src/
-│   ├── validation/           # Observation rules and validation reports
-│   ├── normalization/        # Canonical fare and route fields
-│   ├── deduplication/        # Capture and economic duplicate handling
-│   ├── consolidation/        # Cross-source record consolidation
-│   ├── anomaly_detection/    # Fare anomaly detection
-│   ├── route_aggregation/    # Route and booking-window series
-│   ├── index_engine/         # Route, period, and round index calculations
-│   ├── backtesting/          # Historical metrics and production gates
-│   ├── collection/           # Provider adapters, live clients, budgets, persistence
-│   ├── api/                  # FastAPI routes, settings, repository, snapshot, services
-│   └── dashboard/            # Dashboard router, template, static pages, frontend bridge
-├── tests/                    # Automated tests and fixtures
-├── .env.example              # Environment variable names and safe defaults; no real keys
-├── Dockerfile                # Hardened API container image
-├── docker-compose.yml        # Local container setup and persistent live-quote volume
-├── requirements-phase14.txt  # Runtime dependencies
-└── requirements-dev.txt      # Development and test dependencies
+The monitored basket contains 15 routes: `BOM-DEL`, `BLR-DEL`, `BLR-BOM`, `DEL-HYD`, `DEL-PNQ`, `CCU-DEL`, `AMD-DEL`, `DEL-MAA`, `BOM-HYD`, `BLR-CCU`, `DEL-SXR`, `DEL-GOI`, `DEL-GAU`, `BLR-COK`, and `DEL-IDR`.
+
+## Interface gallery
+
+The bundled interface includes the Overview, Anomaly Routes, Lead-Time Analysis, Data Quality, CPI Validation, and API pages. The project screenshot above shows the Overview page. The route map image below is the map asset used by the dashboard for route context.
+
+<details>
+<summary><strong>India route map — dashboard map asset</strong></summary>
+
+![India map asset used by the Vayu Index dashboard](src/dashboard/static/vayu_frontend/india-map.png)
+
+</details>
+
+## System architecture
+
+The browser uses the FastAPI application for dashboard data and API responses. At startup, the backend loads and checks the manifest-referenced tables into a consistent snapshot. Request handlers shape that snapshot into JSON; they do not rerun the analysis pipeline for each page request. Live collection is a separate operator action and writes short-lived quotes apart from the published index inputs.
+
+```mermaid
+flowchart TD
+    UI[Bundled dashboard pages] --> BR[Runtime frontend data bridge]
+    BR --> API[FastAPI application and API routers]
+    MAN[Publication manifest and CSV tables] --> SNAP[Snapshot repository]
+    SNAP --> API
+    CPI[Processed MoSPI CPI] --> COMP[CPI comparison service]
+    SNAP --> COMP
+    COMP --> API
+    LIVE[SerpApi / Ignav collector commands] --> STORE[Short-lived quote persistence]
+    STORE --> API
+    API --> CLIENT[JSON clients and OpenAPI]
 ```
 
-Key API implementation files are `src/api/main.py` (route registration), `src/api/config.py` (settings and API versions), `src/api/repository.py` and `src/api/snapshot.py` (published data loading), and `src/api/services/` (response shaping and CPI comparison). The publication manifest is `config/phase14_publication_manifest.json`.
+### Technology stack
 
-## Run locally
+| Layer | Implementation |
+|---|---|
+| API | Python, FastAPI, and Uvicorn |
+| Data processing | Python pipeline modules and CSV-based published tables |
+| Configuration | JSON and CSV route, source, and publication manifests |
+| Dashboard | Bundled static pages served by the backend |
+| Live fare collection | Provider adapters, request budgets, and local quote persistence |
+| CPI comparison | Processed official MoSPI airfare CPI and exact-month comparison rules |
+| Deployment | Dockerfile and Docker Compose |
+| Verification | Pytest suite and phase-specific verification scripts |
 
-Requires Python 3.11 or newer. From this `backend/` directory in PowerShell:
+## Reading the dashboard
+
+| Indicator | Interpretation |
+|---|---|
+| Vayu Airfare Price Index | Prototype index level calculated from the currently published route basket; it is not an official market index. |
+| Route fare | A snapshot value unless the display identifies it as a fresh, verified provider quote. |
+| Coverage and change | Route coverage and movement against available comparison observations; a missing prior round means no prior-round comparison is available. |
+| Anomaly severity | Review category based on the observed fare range and deviation; it does not establish a pricing violation. |
+| MoSPI CPI | Official monthly CPI reference series, kept separate from daily airfare quotes. |
+| CPI comparison metrics | Computed only when exact-month overlap and coverage requirements are met. Insufficient overlap is reported without substituting sample values. |
+| Live source status | Provider readiness and current quote availability. A configured key does not guarantee a successful search or available fare. |
+
+## Local setup
+
+### Prerequisites
+
+- Python 3.11 or newer.
+- PowerShell on Windows, or a compatible shell on macOS/Linux.
+- Docker Desktop only when using the container setup.
+- A provider key only for a live collection command; the bundled snapshot and dashboard do not require one.
+
+### 1. Clone the project
+
+```powershell
+git clone https://github.com/saumya0723/Vayu-Index.git
+cd Vayu-Index\backend
+```
+
+### 2. Create an environment and install dependencies
 
 ```powershell
 py -m venv .venv
 .\.venv\Scripts\Activate.ps1
 py -m pip install -r requirements-phase14.txt
+```
+
+### 3. Check and start the application
+
+```powershell
 py scripts/run_api.py --check
 py scripts/run_api.py --host 127.0.0.1 --port 8000
 ```
 
-Keep the server terminal open, then use:
+Keep the server terminal open while using the site. The backend serves the bundled dashboard, so a separate frontend development server is not needed for normal use.
 
-| Page | Local address |
+### API documentation
+
+The API base path is **`/api/v1`**. Dashboard data endpoints use read-only `GET` requests. Live collection runs as an explicit command-line operation. Most successful responses contain `meta` fields for API version and data status plus a `data` object for the result. Errors include an error code, message, details, request ID, and API version.
+
+| Interface | Local URL |
 |---|---|
-| Dashboard | <http://127.0.0.1:8000/ui/> |
+| Dashboard home | <http://127.0.0.1:8000/ui/> |
 | Dashboard API page | <http://127.0.0.1:8000/ui/api.html> |
-| Swagger / OpenAPI UI | <http://127.0.0.1:8000/api/v1/docs> |
-| API health | <http://127.0.0.1:8000/api/v1/health> |
+| Swagger UI | <http://127.0.0.1:8000/api/v1/docs> |
+| ReDoc | <http://127.0.0.1:8000/api/v1/redoc> |
+| OpenAPI schema | <http://127.0.0.1:8000/api/v1/openapi.json> |
+| Health endpoint | <http://127.0.0.1:8000/api/v1/health> |
 
-No live-provider key is needed to start the API or view the bundled prototype snapshot.
+**Endpoint reference**
 
-## API details
-
-The API base path is **`/api/v1`**. Data routes use `GET`; they do not trigger fare collection. Most responses have the form:
-
-```json
-{
-  "meta": {
-    "api_version": "v1",
-    "response_schema_version": "phase14-api-v1",
-    "data_status": "SYNTHETIC_PROTOTYPE",
-    "official_status": "NOT_OFFICIAL",
-    "is_real_market_collection": false,
-    "publication_class": "PUBLISHED",
-    "request_id": "request-id",
-    "source_files": []
-  },
-  "data": {}
-}
-```
-
-`meta` also carries pipeline versions and the snapshot publication timestamp. Error responses contain `error_code`, `message`, `details`, `request_id`, and `api_version`. List endpoints accept `limit` (1–1000, default 100) and `offset` (default 0) where applicable. Swagger at `/api/v1/docs` shows the generated OpenAPI schema.
-
-| Method and path | Returned information | Query parameters |
+| Method and path | Purpose | Query parameters |
 |---|---|---|
-| `GET /health` | API health and uptime | — |
-| `GET /status` | Snapshot, index, live collection, and backtest statuses | — |
+| `GET /health` | Liveness and uptime | — |
+| `GET /status` | Snapshot, collection, index, and backtest status | — |
 | `GET /metadata` | Basket and publication metadata | — |
-| `GET /frontend-data` | Combined dashboard data | — |
-| `GET /cpi-comparison` | Vayu/MoSPI exact-month comparison and qualification status | — |
-| `GET /index` | Index history, or route series if `route` is set | `route`, `variant`, `start`, `end`, `limit`, `offset` |
-| `GET /index/latest` | Latest index point | `variant` |
+| `GET /frontend-data` | Combined dashboard data bundle | — |
+| `GET /cpi-comparison` | Exact-month Vayu/MoSPI comparison and qualification status | — |
+| `GET /index` | Index history or a route series when `route` is supplied | `route`, `variant`, `start`, `end`, `limit`, `offset` |
+| `GET /index/latest` | Latest index observation | `variant` |
 | `GET /index/history` | Paginated index history | `variant`, `start`, `end`, `limit`, `offset` |
 | `GET /index/period` | Period-grain index rows | `variant`, `grain`, `period_id`, `limit`, `offset` |
-| `GET /index/coverage` | Basket coverage for a round | `variant`, `round_id` |
+| `GET /index/coverage` | Route basket coverage for a collection round | `variant`, `round_id` |
 | `GET /routes` | Monitored basket and route coverage | `coverage_status`, `route`, `limit`, `offset` |
 | `GET /routes/{route_id}` | Details for one monitored route | `variant` |
-| `GET /routes/{route_id}/history` | History for one route | `fare_class`, `apw`, `start`, `end`, `limit`, `offset` |
-| `GET /fares` | Dashboard fare history | `route`, `fare_class`, `apw`, `start`, `end`, `limit`, `offset` |
-| `GET /lead-time` | Fare summary by booking window | `route`, `apw`, `limit`, `offset` |
+| `GET /routes/{route_id}/history` | Fare history for one route | `fare_class`, `apw`, `start`, `end`, `limit`, `offset` |
+| `GET /fares` | Fare observations for dashboard views | `route`, `fare_class`, `apw`, `start`, `end`, `limit`, `offset` |
+| `GET /lead-time` | Fare summaries by booking window | `route`, `apw`, `limit`, `offset` |
 | `GET /data-quality` | Validation, anomaly, and coverage diagnostics | `variant` |
 | `GET /sources` | Source registry and authorization/compliance status | — |
 | `GET /collection/status` | Published collection runs and coverage | — |
@@ -152,13 +196,13 @@ The API base path is **`/api/v1`**. Data routes use `GET`; they do not trigger f
 | `GET /collection/serpapi` | SerpApi readiness, quote counts, and price insights | — |
 | `GET /collection/ignav` | Ignav readiness and available quotes | — |
 | `GET /collection/skyscanner` | Legacy Skyscanner readiness and quotes | — |
-| `GET /backtest/status` | Backtest metrics and production gates | — |
+| `GET /backtest/status` | Backtest metrics and publication gates | — |
 | `GET /anomalies` | Filterable anomaly records | `severity`, `rule_id`, `route_id`, `recommended_review`, `limit`, `offset` |
-| `GET /exports` | Export IDs and available formats | — |
-| `GET /exports/{export_id}` | CSV or JSON dataset export | `format`, `variant`, `route_id`, `grain`, `period_id`, `round_id`, `severity`, `rule_id`, `coverage_status`, `start`, `end`, `fare_class`, `apw` |
+| `GET /exports` | Available export IDs and formats | — |
+| `GET /exports/{export_id}` | Dataset export in JSON or CSV | `format`, `variant`, `route_id`, `grain`, `period_id`, `round_id`, `severity`, `rule_id`, `coverage_status`, `start`, `end`, `fare_class`, `apw` |
 | `GET /methodology` | Methodology document references | `phase` |
 
-Example requests from PowerShell:
+Examples from PowerShell:
 
 ```powershell
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/health | ConvertTo-Json -Depth 6
@@ -166,11 +210,30 @@ Invoke-RestMethod 'http://127.0.0.1:8000/api/v1/routes?limit=100' | ConvertTo-Js
 Invoke-RestMethod http://127.0.0.1:8000/api/v1/cpi-comparison | ConvertTo-Json -Depth 10
 ```
 
+## Frontend development
+
+The backend repository contains the bundled dashboard files and serves them directly. The source files are grouped by dashboard page; the runtime bridge connects those pages to the backend API. The README screenshot is stored separately in `docs/images/`.
+
+| File | Responsibility |
+|---|---|
+| `src/dashboard/static/vayu_frontend/index.html` | Overview, index trend, and monitored-route list |
+| `src/dashboard/static/vayu_frontend/anomaly-routes.html` | Anomaly filters, route details, and map |
+| `src/dashboard/static/vayu_frontend/lead-time.html` | Booking-window and lead-time analysis |
+| `src/dashboard/static/vayu_frontend/data-quality.html` | Validation and data quality views |
+| `src/dashboard/static/vayu_frontend/cpi-validation.html` | MoSPI CPI series and Vayu comparison |
+| `src/dashboard/static/vayu_frontend/api.html` | API console and endpoint information |
+| `src/dashboard/static/vayu_frontend/style.css` | Shared styles for the bundled dashboard pages |
+| `src/dashboard/static/vayu-frontend-bridge.js` | Runtime integration between bundled pages and backend data |
+| `src/dashboard/router.py` | Dashboard page routes and static asset serving |
+| `src/api/main.py` | FastAPI application and API route registration |
+
+The bundled frontend is already included; normal backend setup does not require Node.js or a frontend build. Keep frontend edits out of backend-only changes unless the team explicitly changes that requirement.
+
 ## Official MoSPI Reference Data
 
 ### What it is
 
-The bundled source workbook is `data/official/mospi/raw/cpi_1822(final).xlsx`. It contains the official Consumer Price Index (CPI) series downloaded from India's [e-Sankhyiki portal](https://esankhyiki.mospi.gov.in/), operated by the Ministry of Statistics and Programme Implementation (MoSPI).
+The source workbook is `data/official/mospi/raw/cpi_1822(final).xlsx`. It contains the official Consumer Price Index series published through India's [e-Sankhyiki portal](https://esankhyiki.mospi.gov.in/), operated by the Ministry of Statistics and Programme Implementation (MoSPI).
 
 | Series field | Value |
 |---|---|
@@ -187,58 +250,47 @@ The bundled source workbook is `data/official/mospi/raw/cpi_1822(final).xlsx`. I
 
 ### Role in the VAYU project
 
-This dataset is the official external benchmark for the airfare component. It is separate from Vayu's airfare quote observations and is not merged into the synthetic observation pipeline. It provides an authoritative MoSPI airfare CPI series for comparison with eligible Vayu monthly index values. The comparison uses exact calendar-month matches and the coverage rules implemented by the CPI comparison service; when there are not enough qualifying overlapping months, comparison metrics remain uncomputed.
+MoSPI airfare CPI is the official external reference series for the airfare component. It is separate from Vayu airfare observations and is not merged into the synthetic observation pipeline. The comparison service pairs exact calendar months and applies its complete-period and basket-coverage requirements. If there are too few qualifying overlapping months, metrics remain uncomputed; the dashboard does not fill those results with sample values.
 
-### Source integrity and processed series
+### Source integrity and processing
 
-The original workbook is retained under `data/official/mospi/raw/`. Processing writes the tidy monthly table and provenance metadata to `data/official/mospi/processed/`. The transformation organizes fields and periods; it does not fill or interpolate missing CPI values. Processing code and validation are in `scripts/process_mospi_airfare_cpi.py` and `tests/test_mospi_processing.py`.
+The original workbook is kept under `data/official/mospi/raw/`. Processing writes a monthly table and provenance metadata under `data/official/mospi/processed/`. The transformation organizes source fields and periods without inventing or interpolating CPI observations. The processor is `scripts/process_mospi_airfare_cpi.py`, with validation in `tests/test_mospi_processing.py`.
 
-## Live SerpApi collection
+## Demonstration scope
 
-SerpApi Google Flights collection is opt-in and operator-triggered. It sends bounded route/date searches to SerpApi using INR and the India locale. The API key is read from the backend process environment variable `SERPAPI_API_KEY`; it must never be added to frontend code or Git.
+Vayu is an evaluator-facing prototype. Use the source and status labels on each page when presenting dashboard values.
 
-Set a key privately in the current PowerShell session, then use the account check and dry run before a live request:
+- **Index data:** the bundled Vayu index snapshot is synthetic prototype data, not an official market index.
+- **Live quotes:** provider responses are short-lived search observations. Availability depends on route, travel date, search parameters, provider access, and quota.
+- **CPI comparison:** MoSPI CPI is a monthly reference. Daily live fares do not substitute for monthly CPI observations or establish CPI overlap.
+- **Route coverage:** the monitored basket lists all 15 routes, but a route can lack an observation for a given period or a fresh live quote.
+- **Production readiness:** successful API startup or live collection does not by itself establish adequate history, coverage, backtesting, or official publication status.
 
-```powershell
-$secure = Read-Host "Paste SerpApi key" -AsSecureString
-$env:SERPAPI_API_KEY = [System.Net.NetworkCredential]::new("", $secure).Password
-py scripts/check_serpapi_account.py
-py scripts/run_live_serpapi_collection.py --dry-run
-py scripts/run_live_serpapi_collection.py --confirm-live --route DEL-BOM --max-searches 1
-```
+## Validation
 
-The account check does not consume a Google Flights search. The dry run makes no provider request. The final command may consume one search. Check quota before running the full basket. The collector writes short-lived files under `outputs/live_collection/`; this directory is ignored by Git. Full settings and command options are documented in [`docs/live_collection_serpapi.md`](docs/live_collection_serpapi.md).
-
-## Tests and validation
-
-Install development dependencies and run the project checks from this directory:
+The repository includes API startup checks, automated tests, phase-specific verification scripts, and pipeline methodology documents. Run the available checks from `backend/`:
 
 ```powershell
+py scripts/run_api.py --check
 py -m pip install -r requirements-dev.txt
 py -m pytest tests/
 py scripts/verify_phase14.py
 ```
 
-Phase-specific processing commands are available under `scripts/`, including validation, normalization, deduplication, anomaly detection, consolidation, route aggregation, index calculation, and backtesting. Review the relevant methodology in `docs/` before regenerating published outputs.
+These commands check software behavior and project data requirements. A successful run does not certify the index as official or establish predictive accuracy. Review [`docs/backtesting_methodology.md`](docs/backtesting_methodology.md) for historical evaluation and publication gates.
 
-## Deployment
+## Credits
 
-The backend includes a Dockerfile and Docker Compose configuration. For a local container deployment:
+**Vayu Index team** — Smart India Hackathon 2026 problem statement **SIH26056**, Development of a Real-time Airfare Price Index for India.
 
-```powershell
-Copy-Item .env.example .env
-docker compose config --quiet
-docker compose up --build -d
-```
+MoSPI is credited as the publisher of the CPI reference series, and DGCA traffic data is used for route-basket context and weighting inputs. The dashboard preview was provided for this project README. Source attribution does not imply government endorsement.
 
-Add real provider keys only to the local ignored `.env` file or deployment secret manager. Compose binds to localhost by default and uses a persistent volume for live quote artifacts. For host settings, CORS, public deployment, and quote persistence details, see [`docs/deployment.md`](docs/deployment.md).
+---
 
-## Related documentation
+<div align="center">
 
-- [`docs/index_methodology.md`](docs/index_methodology.md) — Index construction
-- [`docs/anomaly_detection_methodology.md`](docs/anomaly_detection_methodology.md) — Anomaly detection
-- [`docs/backtesting_methodology.md`](docs/backtesting_methodology.md) — Backtesting and release gates
-- [`docs/live_collection_serpapi.md`](docs/live_collection_serpapi.md) — SerpApi integration
-- [`docs/live_collection_ignav.md`](docs/live_collection_ignav.md) — Ignav integration
-- [`docs/live_collection_skyscanner.md`](docs/live_collection_skyscanner.md) — Skyscanner integration requirements
-- [`docs/deployment.md`](docs/deployment.md) — Deployment configuration
+**Vayu Index · Airfare Price Intelligence for India**
+
+*Traceable data. Clearer airfare movement.*
+
+</div>
