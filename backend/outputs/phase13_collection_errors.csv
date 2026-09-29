@@ -1,1 +1,0 @@
-error_id,run_id,request_id,query_id,source_id,route_id,collection_round_id,error_stage,error_code,retry_state,http_status,exception_class,sanitized_message,raw_artifact_hash,occurred_at,terminal,secret_redaction_applied,collector_version,parser_version,phase13_schema_version

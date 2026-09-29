@@ -1,2 +1,0 @@
--r requirements-phase14.txt
-pytest>=8,<10
