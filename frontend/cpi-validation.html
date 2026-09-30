@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CPI Validation | Vayu Index</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top-header">
+  <div class="brand">
+    <div class="brand-icon">✈</div>
+    <div class="brand-text">
+      <h1>VAYU INDEX</h1>
+      <p>Airfare Price Intelligence Platform</p>
+    </div>
+  </div>
+  <div class="header-country"><img src="./india-logo.png" alt="India">INDIA</div>
+</header>
+
+<nav class="main-nav">
+  <div class="nav-container">
+    <div class="nav-links">
+      <a href="index.html" class="nav-link">Overview</a>
+      <a href="anomaly-routes.html" class="nav-link">Anomaly Routes</a>
+      <a href="lead-time.html" class="nav-link">Lead-Time Analysis</a>
+      <a href="data-quality.html" class="nav-link">Data Quality</a>
+      <a href="cpi-validation.html" class="nav-link active">CPI Validation</a>
+      <a href="api.html" class="nav-link">API</a>
+    </div>
+    <div class="route-search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><line x1="16.5" y1="16.5" x2="21" y2="21"></line></svg>
+      <input type="text" id="routeSearch" placeholder="Search routes..." autocomplete="off">
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="last-updated"><span>Sample data · as of</span> <strong>28 Sep 2026</strong></div>
+      <div class="tourism-slide slide-1"></div>
+  <div class="tourism-slide slide-2"></div>
+  <div class="tourism-slide slide-3"></div>
+  <div class="tourism-slide slide-4"></div>
+  <div class="tourism-slide slide-5"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-label">CPI VALIDATION</div>
+    <h2>CPI Validation</h2>
+    <p>Benchmarked against MoSPI CPI — Transport Group (2024=100).</p>
+  </div>
+</section>
+
+<main class="page-container">
+
+  <!-- MAIN COMPARISON CHART -->
+  <section class="chart-section hero-overlap">
+    <div class="chart-header">
+      <div class="chart-header-row">
+        <h3>Airfare Price Index Trend</h3>
+        <div class="chart-legend">
+          <div class="legend-item"><span class="legend-dot vayu-dot"></span>Vayu Airfare Index</div>
+          <div class="legend-item"><span class="legend-dot mospi-dot"></span>MoSPI CPI — Transport</div>
+        </div>
+      </div>
+      <div class="chart-header-row">
+        <p>Comparison period: Oct 2025 – Sep 2026 | Base: 2024=100</p>
+      </div>
+    </div>
+
+    <div class="chart-area">
+      <svg id="cpiChart" class="index-chart" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </section>
+
+  <!-- VALIDATION METRICS -->
+  <section class="validation-metrics" id="cpiMetrics"></section>
+
+  <section class="chart-section"><div class="chart-header"><div class="chart-header-row"><h3>Back-test vs DGCA Monthly Average Fare</h3>
+<div class="chart-legend"><div class="legend-item"><span class="legend-dot vayu-dot"></span>APIx (monthly)</div><div class="legend-item"><span class="legend-dot mospi-dot"></span>DGCA avg fare</div></div></div>
+<div class="chart-header-row"><p>Both rebased to Oct 2025 = 100 · DGCA values are placeholders until official figures are loaded</p></div></div>
+<div class="chart-area"><svg id="dgcaChart" class="index-chart" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet"></svg></div></section>
+<section class="validation-metrics" id="dgcaMetrics"></section>
+<section class="chart-section"><div class="chart-header"><div class="chart-header-row"><h3>30-Day Daily APIx Back-test Window</h3></div>
+<div class="chart-header-row"><p>30 Aug – 28 Sep 2026 · daily index, sample data</p></div></div>
+<div class="chart-area"><svg id="dailyChart" class="index-chart" viewBox="0 0 1000 340" preserveAspectRatio="xMidYMid meet"></svg></div></section>
+<!-- VALIDATION STATUS -->
+  <section class="status-card validation-status-card">
+    <div class="status-header">
+      <h3>Validation Status</h3>
+      <div class="status-badge-row">
+        <div class="status-badge healthy">
+          <span class="status-dot-icon"></span>
+          Sample back-test
+        </div>
+      </div>
+    </div>
+    <p class="status-description">Vayu Index is compared with the MoSPI Transport CPI and with DGCA monthly average fares. All series on this page are sample data because the backend is not yet connected; the statistics are computed from those samples and are not evidence of validated accuracy.</p>
+  </section>
+
+</main>
+
+<script>
+(function(){
+const L=["Oct","Nov","Dec","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep"];
+const V=[93.5,95.5,97.6,98.6,100.6,99.4,97.0,100.6,103.0,105.5,108.0,112.0];
+const M=[92.8,95.0,97.0,98.0,100.2,99.0,96.5,100.0,102.0,104.0,106.5,110.5];
+const G=[4620,4780,4950,5010,5120,5060,4890,5150,5290,5410,5560,5740];
+const rb=a=>a.map(v=>v/a[0]*100),Vr=rb(V),Gr=rb(G);
+const mean=a=>a.reduce((s,v)=>s+v,0)/a.length;
+const corr=(a,b)=>{const ma=mean(a),mb=mean(b);let n=0,da=0,db=0;a.forEach((v,i)=>{n+=(v-ma)*(b[i]-mb);da+=(v-ma)**2;db+=(b[i]-mb)**2});return n/Math.sqrt(da*db)};
+const dev=(a,b)=>a.map((v,i)=>Math.abs(v-b[i])/b[i]*100);
+function draw(id,labels,series,min,max,step,every){
+const svg=document.getElementById(id),X0=60,X1=980,Y0=30,Y1=290,y=v=>Y1-(v-min)/(max-min)*(Y1-Y0),x=i=>X0+(X1-X0)*i/(labels.length-1);
+let h="";for(let v=min;v<=max;v+=step)h+=`<line class="grid-line" x1="${X0}" y1="${y(v)}" x2="${X1}" y2="${y(v)}"></line><text class="axis-label" x="50" y="${y(v)+4}" text-anchor="end">${v}</text>`;
+series.forEach(s=>{h+=`<polyline class="${s.line}" fill="none" points="${s.d.map((v,i)=>x(i)+","+y(v)).join(" ")}"></polyline>`;if(s.dots)s.d.forEach((v,i)=>h+=`<circle class="${s.dot}" cx="${x(i)}" cy="${y(v)}" r="3"></circle>`)});
+labels.forEach((t,i)=>{if(i%every==0)h+=`<text class="axis-label" x="${x(i)}" y="315" text-anchor="middle">${t}</text>`});
+svg.innerHTML=h;}
+draw("cpiChart",L,[{d:M,line:"mospi-chart-line",dot:"mospi-point",dots:1},{d:V,line:"vayu-chart-line",dot:"vayu-point",dots:1}],90,115,5,1);
+draw("dgcaChart",L,[{d:Gr,line:"mospi-chart-line",dot:"mospi-point",dots:1},{d:Vr,line:"vayu-chart-line",dot:"vayu-point",dots:1}],95,130,5,1);
+const daily=[],dl=[];for(let i=0;i<30;i++){daily.push(+(108+4*i/29+0.6*Math.sin(i*1.7)).toFixed(1));const d=new Date(2026,7,30+i);dl.push(d.getDate()+" "+d.toLocaleString("en",{month:"short"}))}
+draw("dailyChart",dl,[{d:daily,line:"vayu-chart-line",dot:"vayu-point",dots:1}],104,116,2,5);
+const card=(c,l,v,d)=>`<div class="metric-card ${c}"><p class="metric-label">${l}</p><div class="metric-value">${v}</div><p class="metric-description">${d}</p></div>`;
+const d1=dev(V,M),d2=dev(Vr,Gr);
+document.getElementById("cpiMetrics").innerHTML=card("metric-good","Correlation",corr(V,M).toFixed(2),"APIx vs MoSPI Transport CPI")+card("metric-neutral","Average Deviation",mean(d1).toFixed(1)+"%","Mean absolute gap")+card("metric-warn","Peak Deviation",Math.max(...d1).toFixed(1)+"%","Maximum divergence")+card("metric-info","Comparison Period","12","Months (Oct 2025 \u2013 Sep 2026)");
+document.getElementById("dgcaMetrics").innerHTML=card("metric-good","Correlation vs DGCA",corr(Vr,Gr).toFixed(2),"Monthly, rebased")+card("metric-neutral","Average Deviation",mean(d2).toFixed(1)+"%","Mean absolute gap")+card("metric-warn","Peak Deviation",Math.max(...d2).toFixed(1)+"%","Maximum divergence")+card("metric-info","Back-test Window","30","Days of daily APIx");
+})();
+</script>
+<script>
+// Interactive chart tooltips
+document.querySelectorAll('.vayu-point, .mospi-point').forEach((point) => {
+  point.addEventListener('mouseover', (e) => {
+    const cx = e.target.getAttribute('cx');
+    const cy = e.target.getAttribute('cy');
+    const isVayu = e.target.classList.contains('vayu-point');
+    
+    // Map SVG coordinates to month and value
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const points = [
+      { cx: 80, value: 106.2 },
+      { cx: 152, value: 106.8 },
+      { cx: 224, value: 107.5 },
+      { cx: 296, value: 108.2 },
+      { cx: 368, value: 108.5 },
+      { cx: 440, value: 108.0 },
+      { cx: 512, value: 107.2 },
+      { cx: 584, value: 107.5 },
+      { cx: 656, value: 107.8 },
+      { cx: 728, value: 108.2 },
+      { cx: 800, value: 108.5 },
+      { cx: 872, value: 108.0 },
+      { cx: 944, value: 107.5 }
+    ];
+    
+    const pointData = points.find(p => p.cx == cx);
+    const monthIndex = points.indexOf(pointData);
+    
+    let tooltip = document.querySelector('.chart-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.className = 'chart-tooltip';
+      document.querySelector('.chart-area').appendChild(tooltip);
+    }
+    
+    const series = isVayu ? 'Vayu Index' : 'MoSPI CPI';
+    const color = isVayu ? '#f07828' : '#64748b';
+    tooltip.innerHTML = `
+      <div class="tooltip-month">${monthNames[monthIndex]}</div>
+      <div class="tooltip-row">
+        <span class="tooltip-swatch" style="background-color: ${color}"></span>
+        <span>${series}: ${isVayu ? pointData.value : (pointData.value + 0.8)}</span>
+      </div>
+    `;
+    tooltip.classList.add('visible');
+    tooltip.style.left = (cx / 10 + 6) + '%';
+  });
+
+  point.addEventListener('mouseout', () => {
+    const tooltip = document.querySelector('.chart-tooltip');
+    if (tooltip) tooltip.classList.remove('visible');
+  });
+});
+
+// Animate metric numbers counting up from 0 on load
+(function () {
+  function animateCounters(selector) {
+    document.querySelectorAll(selector).forEach((el) => {
+      const raw = el.textContent.trim();
+      const match = raw.match(/^([^\d]*)([\d,]+(?:\.\d+)?)([\s\S]*)$/);
+      if (!match) return;
+      const prefix = match[1], numStr = match[2], suffix = match[3];
+      const target = parseFloat(numStr.replace(/,/g, ""));
+      if (isNaN(target)) return;
+      const decimals = numStr.includes(".") ? numStr.split(".")[1].length : 0;
+      const duration = 1200;
+      const start = performance.now();
+      function frame(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const current = target * eased;
+        const display = decimals > 0 ? current.toFixed(decimals) : Math.round(current).toString();
+        el.textContent = prefix + display + suffix;
+        if (progress < 1) requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    });
+  }
+  animateCounters(".metric-value");
+})();
+</script>
+
+</body>
+</html>

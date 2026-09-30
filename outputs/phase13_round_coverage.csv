@@ -1,0 +1,4 @@
+run_id,collection_round_id,collection_round_anchor,queries_planned,attempts_recorded,successful_attempts,sources_planned,sources_successful,routes_planned,routes_successful,apws_planned,apws_successful,priced_observations,sold_out_observations,compliance_blocks,parse_errors,round_coverage_pct,phase13_schema_version
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,ROUND::2026-09-14T09:00,2026-09-14 09:00,1650,1650,0,11,0,15,0,5,0,0,0,1650,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,ROUND::2026-09-14T14:30,2026-09-14 14:30,1650,1650,0,11,0,15,0,5,0,0,0,1650,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,ROUND::2026-09-14T20:15,2026-09-14 20:15,1650,1650,0,11,0,15,0,5,0,0,0,1650,0,0.000000,phase13-v1

@@ -1,0 +1,16 @@
+basket_rank,traffic_rank,route_id,city_1,city_2,passengers_city1_to_city2,passengers_city2_to_city1,total_bidirectional_passengers,zero_treated_total_bidirectional_passengers,traffic_weight,traffic_weight_full_precision,weight_residual_applied,region_city_1,region_city_2,selection_stage,selection_reason,selection_method,dgca_financial_year
+1,1,BOM-DEL,DELHI,MUMBAI,3426228,3424641,6850869,6850869,0.162603,0.1626037191,-1e-06,North,West,TOP_K,Rank 1 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+2,2,BLR-DEL,BENGALURU,DELHI,2331024,2350018,4681042,4681042,0.111103,0.1111034,0.0,South,North,TOP_K,Rank 2 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+3,3,BLR-BOM,BENGALURU,MUMBAI,2030837,2083737,4114574,4114574,0.097658,0.0976584189,0.0,South,West,TOP_K,Rank 3 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+4,4,DEL-HYD,DELHI,HYDERABAD,1638188,1657730,3295918,3295918,0.078228,0.0782278167,0.0,North,South,TOP_K,Rank 4 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+5,5,DEL-PNQ,DELHI,PUNE,1469849,1454196,2924045,2924045,0.069402,0.069401501,0.0,North,West,TOP_K,Rank 5 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+6,6,CCU-DEL,DELHI,KOLKATA,1417339,1353047,2770386,2770386,0.065754,0.0657544418,0.0,North,East,TOP_K,Rank 6 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+7,7,AMD-DEL,AHMEDABAD,DELHI,1262081,1274961,2537042,2537042,0.060216,0.0602160784,0.0,West,North,TOP_K,Rank 7 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+8,8,DEL-MAA,CHENNAI,DELHI,1222119,1230642,2452761,2452761,0.058216,0.0582156892,0.0,South,North,TOP_K,Rank 8 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+9,9,BOM-HYD,HYDERABAD,MUMBAI,1166588,1186691,2353279,2353279,0.055855,0.055854508,0.0,South,West,TOP_K,Rank 9 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+10,10,BLR-CCU,BENGALURU,KOLKATA,1180899,1146081,2326980,2326980,0.05523,0.0552303076,0.0,South,East,TOP_K,Rank 10 — unconditional top-10 by conservative traffic,VAYU-Basket-Rule-v1,2024-25
+11,11,DEL-SXR,DELHI,SRINAGAR,1155836,1159586,2315422,2315422,0.054956,0.0549559813,0.0,North,North,STAGE2_CITY,"Rank 11 — introduces city(ies) ['SRINAGAR'], the highest-ranked remaining route to do so",VAYU-Basket-Rule-v1,2024-25
+12,18,DEL-GOI,DABOLIM,DELHI,787149,774678,1561827,1561827,0.03707,0.0370695862,0.0,West,North,STAGE2_CITY,"Rank 18 — introduces city(ies) ['DABOLIM'], the highest-ranked remaining route to do so",VAYU-Basket-Rule-v1,2024-25
+13,19,DEL-GAU,DELHI,GUWAHATI,780850,757793,1538643,1538643,0.036519,0.0365193195,0.0,North,Northeast,STAGE1_REGION,"Rank 19 — introduces region(s) ['Northeast'], the highest-ranked route to do so",VAYU-Basket-Rule-v1,2024-25
+14,21,BLR-COK,BENGALURU,KOCHI,735881,749267,1485148,1485148,0.03525,0.0352496287,0.0,South,South,STAGE2_CITY,"Rank 21 — introduces city(ies) ['KOCHI'], the highest-ranked remaining route to do so",VAYU-Basket-Rule-v1,2024-25
+15,39,DEL-IDR,DELHI,INDORE,461109,463257,924366,924366,0.02194,0.0219396035,0.0,North,Central,STAGE1_REGION,"Rank 39 — introduces region(s) ['Central'], the highest-ranked route to do so",VAYU-Basket-Rule-v1,2024-25

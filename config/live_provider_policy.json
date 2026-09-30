@@ -1,0 +1,32 @@
+{
+  "schema_version": "live-provider-policy-v1",
+  "default_provider": "ignav_self_serve_flight_fares",
+  "provider_status": "WAITING_FOR_API_KEY_AND_EMAIL_VERIFICATION",
+  "source_type": "AGGREGATOR_API",
+  "provider_api": "https://ignav.com/api/fares/one-way",
+  "access_application": "https://ignav.com/signup",
+  "playground": "https://ignav.com/playground",
+  "authorization_required": false,
+  "account_email_verification_required": true,
+  "provider_terms_must_be_reviewed": true,
+  "retention_hours_default": 2,
+  "retention_policy_must_be_supplied_from_agreement": false,
+  "default_market": "IN",
+  "default_locale": "en-IN",
+  "default_currency": "INR",
+  "default_adults": 1,
+  "default_cabin": "economy",
+  "direct_flights_only": true,
+  "verified_price_only_for_comparison": true,
+  "searches_per_full_basket_run": 150,
+  "search_definition": "15 locked routes x 2 directions x 5 advance-purchase windows",
+  "request_mode": "Synchronous one-way searches with bounded retries for network failures and HTTP 424 upstream errors.",
+  "limitations": [
+    "An Ignav account, verified account email, and API key are required; signup is self-service and does not require partner approval.",
+    "The provider's fare, airline, and route coverage varies by search date; verify the Vayu routes in its playground.",
+    "Search results are live quotes for future travel dates; they are not a historical archive.",
+    "Prices can be verified or unverified; only verified INR fares are eligible for comparisons.",
+    "Provider economy results do not expose the Vayu Saver, Standard, and Flexi fare brands, so no fare-class mapping is inferred.",
+    "The existing synthetic Vayu index is not replaced by provider quotes; a separate historical real-data build and fare-class mapping are required before production CPI validation."
+  ]
+}

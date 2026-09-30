@@ -1,0 +1,12 @@
+{
+  "canonical": [
+    "Economy Saver",
+    "Economy Standard",
+    "Economy Flexi"
+  ],
+  "sources": {
+    "skyscanner": {}
+  },
+  "unknown_status": "UNKNOWN_FARE_CLASS",
+  "unknown_phase2_handoff_eligible": false
+}
