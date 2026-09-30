@@ -24,9 +24,9 @@ The backend combines a reproducible data pipeline, a versioned FastAPI service, 
 
 > **Measure airfare movement with clear source, coverage, and data-status information.**
 
-![Vayu Index front page showing the index trend and all 15 monitored routes](docs/dashboard.png)
+![Vayu Index dashboard showing the overview, index trend, and monitored routes](Sample%20Image.png)
 
-*Dashboard preview supplied for the project. The displayed figures are prototype snapshot values, not verified live fares or official statistics.*
+*Dashboard preview. The displayed figures are prototype snapshot values, not verified live fares or official statistics.*
 
 ## The airfare measurement workflow
 
