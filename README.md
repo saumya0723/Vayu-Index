@@ -18,7 +18,7 @@ Route Fares → Index Movement → Anomaly Signals → MoSPI Comparison
 
 ## Overview
 
-**Vayu Index** is an airfare measurement prototype that tracks price movement across a fixed basket of 15 domestic routes in India. It organizes airfare observations into route and booking-window records, detects unusual movements, calculates basket-weighted index series, and compares eligible monthly values with official MoSPI airfare CPI.
+**Vayu Index** is an airfare measurement prototype that tracks price movement across a fixed basket of 15 domestic routes in India. It organizes airfare observations into route and booking-window records, validates observations with deterministic structural and logical checks, detects unusual movements, calculates basket-weighted index series, and compares eligible monthly values with official MoSPI airfare CPI. Validation outcomes retain their status and reasons so records can be reviewed before they enter later pipeline stages.
 
 The backend combines a reproducible data pipeline, a versioned FastAPI service, and the bundled browser dashboard. The currently published Vayu index snapshot is **synthetic prototype data**. It is not an official market index or MoSPI CPI. Optional live collectors can retrieve short-lived fares for specific routes and dates; those quotes do not automatically become historical index observations or CPI data.
 
@@ -60,6 +60,7 @@ flowchart TD
 | Workspace or service | Purpose | Available functions |
 |---|---|---|
 | **Overview** | Review the current Vayu snapshot | Index level and change, trend chart, route fares, and monitored-basket status |
+| **Validation engine** | Check whether each observation is usable | Required-field, date, fare, and logical-consistency checks with recorded outcomes and edge-case logging |
 | **Anomaly Routes** | Inspect unusual airfare movements | Route filters, fare, expected range, deviation, severity, and India map |
 | **Lead-Time Analysis** | Compare available fares by booking window | Route and advance-purchase summaries where observations exist |
 | **Data Quality** | Review pipeline and source readiness | Validation results, route coverage, source status, and quality indicators |
@@ -81,6 +82,26 @@ The bundled interface includes the Overview, Anomaly Routes, Lead-Time Analysis,
 
 </details>
 
+## Repository structure
+
+The repository keeps the browser frontend in its own top-level `frontend/` folder. Backend source, configuration, data, scripts, outputs, and tests are separate top-level folders, so deployers can inspect and configure each part directly without a wrapper folder named `backend/`.
+
+```text
+Vayu-Index/
+├── frontend/                 # Standalone dashboard pages and static assets
+├── config/                   # API, route, provider, and publication configuration
+├── data/                     # Official reference and synthetic input data
+├── docs/                     # Methodology, deployment guides, and dashboard image
+├── outputs/                  # Pipeline outputs and reports
+├── scripts/                  # API, pipeline, collection, and verification commands
+├── src/                      # API, dashboard, collection, and analysis modules
+├── tests/                    # Automated checks and fixtures
+├── .env.example               # Safe environment-variable template
+├── Dockerfile
+├── docker-compose.yml
+├── requirements-dev.txt
+└── requirements-phase14.txt
+```
 ## System architecture
 
 The browser uses the FastAPI application for dashboard data and API responses. At startup, the backend loads and checks the manifest-referenced tables into a consistent snapshot. Request handlers shape that snapshot into JSON; they do not rerun the analysis pipeline for each page request. Live collection is a separate operator action and writes short-lived quotes apart from the published index inputs.
@@ -124,6 +145,8 @@ flowchart TD
 | CPI comparison metrics | Computed only when exact-month overlap and coverage requirements are met. Insufficient overlap is reported without substituting sample values. |
 | Live source status | Provider readiness and current quote availability. A configured key does not guarantee a successful search or available fare. |
 
+Validation results distinguish usable observations from invalid records and non-price availability outcomes. A validation result records the status, reason, and any validation errors; validation does not imply that a fare is a verified live quote or official statistic.
+
 ## Local setup
 
 ### Prerequisites
@@ -137,7 +160,7 @@ flowchart TD
 
 ```powershell
 git clone https://github.com/saumya0723/Vayu-Index.git
-cd Vayu-Index\backend
+cd Vayu-Index
 ```
 
 ### 2. Create an environment and install dependencies
@@ -212,7 +235,7 @@ Invoke-RestMethod http://127.0.0.1:8000/api/v1/cpi-comparison | ConvertTo-Json -
 
 ## Frontend development
 
-The backend repository contains the bundled dashboard files and serves them directly. The source files are grouped by dashboard page; the runtime bridge connects those pages to the backend API. The README screenshot is stored separately in `docs/images/`.
+The backend keeps its existing bundled dashboard files and serves them directly. The repository root also contains a separate `frontend/` deployment copy with its bridge script and static assets, so the frontend and backend appear as distinct components in the repository. The screenshot in this README is stored in `docs/images/`.
 
 | File | Responsibility |
 |---|---|
@@ -266,9 +289,11 @@ Vayu is an evaluator-facing prototype. Use the source and status labels on each 
 - **Route coverage:** the monitored basket lists all 15 routes, but a route can lack an observation for a given period or a fresh live quote.
 - **Production readiness:** successful API startup or live collection does not by itself establish adequate history, coverage, backtesting, or official publication status.
 
+For each validated observation, the pipeline preserves the source fields and adds validation fields such as `is_valid`, `validation_status`, `validation_reason`, and `validation_errors`. Invalid or incomplete records remain traceable for review rather than being presented as verified airfare values.
+
 ## Validation
 
-The repository includes API startup checks, automated tests, phase-specific verification scripts, and pipeline methodology documents. Run the available checks from `backend/`:
+The repository includes API startup checks, automated tests, phase-specific verification scripts, and pipeline methodology documents. Run the available checks from the repository root:
 
 ```powershell
 py scripts/run_api.py --check
