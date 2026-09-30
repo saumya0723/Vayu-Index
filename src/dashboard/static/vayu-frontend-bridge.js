@@ -118,9 +118,9 @@
       const trend = document.createElement("span"); trend.textContent = Math.abs(change) < 0.05 ? "Stable" : change > 0 ? "Rising" : "Falling"; changeNode.appendChild(trend);
     }
     const kpis = $$(".kpi-strip .kpi-number");
-    safeText(kpis[0], data.source_status?.authorized ?? 0);
-    safeText(kpis[1], `${latest.routes_represented ?? 0}/${latest.routes_total ?? 0}`);
-    safeText(kpis[2], data.validation?.record_count ?? 0);
+    safeText(kpis[0], data.source_status?.total ?? 0);
+    safeText(kpis[1], `${data.live_quote_routes?.length ?? latest.routes_represented ?? 0}/${latest.routes_total ?? 0}`);
+    safeText(kpis[2], data.live_collection?.verified_observation_count ?? data.validation?.record_count ?? 0);
     const history = [...(data.index_history || [])].sort((a, b) => String(a.round_sort_key).localeCompare(String(b.round_sort_key)));
     const labels = history.map(row => {
       const d = new Date(String(row.round_sort_key).replace(" ", "T") + "Z");

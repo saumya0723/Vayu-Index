@@ -1,6 +1,6 @@
 {
   "schema_version": "live-provider-policy-v1",
-  "default_provider": "ignav_self_serve_flight_fares",
+  "default_provider": "serpapi",
   "provider_status": "WAITING_FOR_API_KEY_AND_EMAIL_VERIFICATION",
   "source_type": "AGGREGATOR_API",
   "provider_api": "https://ignav.com/api/fares/one-way",
