@@ -1,0 +1,21 @@
+from .consolidation_engine import (
+    run_consolidation,
+    read_canonical_csv,
+    build_observation_record,
+    build_flight_cells,
+    build_consolidation_cells,
+    stage0_within_source_values,
+    stage1_flight_representative_fare,
+    stage2_consolidated_fare,
+    alt_source_first_fare,
+    flight_source_spread,
+    compute_dispersion,
+    CONSOLIDATED_COLUMNS,
+    FLIGHT_CELL_COLUMNS,
+    OBSERVATION_MAP_COLUMNS,
+    ConsolidationOutput,
+    ConsolidationCell,
+    FlightCell,
+    ObservationRecord,
+)
+from . import rules

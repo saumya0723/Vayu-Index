@@ -1,0 +1,12 @@
+run_id,source_id,source_name,collection_mode,authorization_status,queries_planned,attempts_recorded,successful_attempts,failed_attempts,compliance_blocks,retry_count,artifacts_captured,observations_extracted,priced_observations,sold_out_observations,no_result_count,missing_price_count,parse_error_count,source_error_count,source_coverage_pct,phase13_schema_version
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,air_india,Air India,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,air_india_express,Air India Express,NOT_CURRENTLY_COLLECTABLE,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,akasa_air,Akasa Air,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,cleartrip,Cleartrip,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,easemytrip,EaseMyTrip,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,goibibo,Goibibo,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,indigo,IndiGo,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,ixigo,Ixigo,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,makemytrip,MakeMyTrip,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,spicejet,SpiceJet,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1
+RUN13-DRY::b8e72e8368c90633a2ccf4c1f627794e,yatra,Yatra,AUTHORIZATION_REQUIRED,NOT_APPROVED,450,450,0,450,450,0,0,0,0,0,0,0,0,0,0.000000,phase13-v1

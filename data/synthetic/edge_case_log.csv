@@ -1,0 +1,17 @@
+observation_id,category,expected_handling,note
+OBS00769,BASELINE,keep,Anchor observation for duplicate/repricing test cluster
+OBS00770,DUPLICATE,collapse_into_OBS00769,"Same capture-identity as OBS00769, 1 min apart, identical total_fare -> technical duplicate"
+OBS00771,GENUINE_REPRICE,keep_as_new_observation,"Same identity as OBS00769 but price changed (5400->5800) -> real repricing, not a duplicate"
+OBS00772,DIFFERENT_SOURCE_SAME_PRODUCT,keep_separate_then_consolidate,"Same product as OBS00769, different source (MMT) -> consolidate via median at aggregation, not a duplicate"
+OBS00773,DIFFERENT_SOURCE_SAME_PRODUCT,keep_separate_then_consolidate,"Same product as OBS00769, different source (Goibibo)"
+OBS00774,DIFFERENT_PRODUCT,keep_as_separate_series,"Same flight as OBS00769 but Economy Flexi -> different product, never pooled with Saver"
+OBS00775,INVALID_NEGATIVE_FARE,exclude_flag_is_valid_false,"base_fare is negative -> physically impossible, invalid record"
+OBS00776,STATISTICAL_OUTLIER,hold_for_review,"~2.5x the price of peer observations for the same product/day with no documented cause -> hold, do not auto-delete or auto-include"
+OBS00777,MISSING_SUBFIELDS,keep_use_total_only,"base_fare/taxes/fees undisclosed by source, total_fare present -> keep, use total only"
+OBS00778,SOLD_OUT,keep_flag_exclude_price_from_averaging,"Flight sold out -> keep row (availability signal), exclude from price averaging"
+OBS00779,MISSING_SOURCE,exclude_from_index_retain_row,"source field missing -> cannot apply source-consolidation logic, exclude from index but keep raw row"
+OBS00780,MISSING_ROUTE,reject_outright,"origin/destination missing -> not a usable observation at all, reject"
+OBS00781,MISSING_TIMESTAMP,reject_outright,"collection_timestamp missing -> cannot place in time or window, reject"
+OBS00782,DIFFERENT_FLIGHT_SAME_ROUTE_CLASS,poolable_level_a,"Different flight (QP-1123) than the 6E-2341 cluster, but same route+class+date+window -> Level A comparable, poolable at route aggregation"
+OBS00783,DIFFERENT_SOURCE_SAME_PRODUCT,keep_separate_then_consolidate,"Same product as OBS00782, different source"
+N/A,FARE_CLASS_AVAILABILITY_GAP,no_row_expected_do_not_impute,"By design, not every fare class is scraped/available every round; verify the pipeline treats any resulting gaps as genuinely missing, never imputed"
