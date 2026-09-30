@@ -22,6 +22,10 @@ The platform brings these records into a single workspace for route coverage ana
 
 > **Measure real market trends with validated integrity.**
 
+![Vayu Index dashboard](frontend/india-map.png)
+
+*Dashboard preview showing Vayu prototype analysis and route coverage metrics. Displayed figures are illustrative records, not official statistics.*
+
 ## The indexing workflow
 
 Data collection is one milestone in a longer statistical journey. The platform follows recorded observations across validation, indexing, and official comparison.
